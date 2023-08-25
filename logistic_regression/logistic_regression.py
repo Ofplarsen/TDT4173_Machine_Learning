@@ -10,13 +10,11 @@ class LogisticRegression:
         # NOTE: Feel free add any hyperparameters 
         # (with defaults) as you see fit
         # Weights that will be used in training
-        self.weights = np.random.randn(1,2)
+        self.weights = np.ones((m,1))
         pass
 
     def h(self, x):
-        #print(self.weights.T.shape, x.T.shape)
-        #print((self.weights.T @ x.T).shape)
-        return sigmoid(self.weights @ x.T)
+        return sigmoid(self.weights.T @ x.T)
 
     def p(self, X, y):
         return np.exp(self.h(X), y) @ np.exp(1 - self.h(X), 1-y)
@@ -31,12 +29,13 @@ class LogisticRegression:
         return np.log(self.L(X, y, n))
 
     def gradient_ascent(self, X, y, epsilon, n):
-        gradients = self.weights
-        sum = None
-        for i in range(1, n+1):
-            sum = (y**i - self.h(X**i)) @ X**i
+        sum = np.zeros((1,2))
 
-        self.weights = gradients + epsilon * sum
+        for i in range(1, n+1):
+            sum += (y**i - self.h(X**i)) @ (X**i)
+
+        self.weights = (self.weights.T + epsilon * sum).T
+        #print(self.weights)
         return self.weights
 
 
@@ -50,8 +49,12 @@ class LogisticRegression:
             y (array<m>): a vector of floats containing 
                 m binary 0.0/1.0 labels
         """
-        learning_rate = 0.01
-        self.gradient_ascent(X, y, learning_rate, len(y))
+        print(X.shape, y.shape)
+        learning_rate = 0.001
+        for i in range(10):
+            self.gradient_ascent(X, y, learning_rate, len(y))
+            loss = binary_cross_entropy(y, self.predict(X))
+            #print(loss)
 
 
 
