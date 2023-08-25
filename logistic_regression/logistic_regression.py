@@ -32,14 +32,11 @@ class LogisticRegression:
 
     def gradient_ascent(self, X, y, epsilon, n):
         gradients = self.weights
+        sum = None
         for i in range(1, n+1):
-            y_ = y**i
-            X_ = X**i
-            next_ = (y**i) - self.h((X**i))
-            next_next = next_ @ (X**i)
-            gradients = (gradients + (epsilon * next_next))
+            sum = (y**i - self.h(X**i)) @ X**i
 
-        self.weights = gradients
+        self.weights = gradients + epsilon * sum
         return self.weights
 
 
@@ -53,8 +50,8 @@ class LogisticRegression:
             y (array<m>): a vector of floats containing 
                 m binary 0.0/1.0 labels
         """
-        learning_rate = 0.1
-        self.gradient_ascent(X.to_numpy(), y.to_numpy(), learning_rate, len(y))
+        learning_rate = 0.01
+        self.gradient_ascent(X, y, learning_rate, len(y))
 
 
 
@@ -72,7 +69,7 @@ class LogisticRegression:
             A length m array of floats in the range [0, 1]
             with probability-like predictions
         """
-        return self.h(X.to_numpy()).flatten()
+        return self.h(X).flatten()
 
         
 
