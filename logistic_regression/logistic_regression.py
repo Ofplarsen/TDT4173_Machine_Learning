@@ -10,7 +10,7 @@ class LogisticRegression:
         # NOTE: Feel free add any hyperparameters 
         # (with defaults) as you see fit
         # Weights that will be used in training
-        self.weights = np.ones((m,1))
+        self.weights = np.zeros((m,1))
         pass
 
     def h(self, x):
@@ -50,7 +50,7 @@ class LogisticRegression:
                 m binary 0.0/1.0 labels
         """
         print(X.shape, y.shape)
-        learning_rate = 0.001
+        learning_rate = 2.8
         for i in range(10):
             self.gradient_ascent(X, y, learning_rate, len(y))
             loss = binary_cross_entropy(y, self.predict(X))
