@@ -11,35 +11,22 @@ class LogisticRegression:
         # (with defaults) as you see fit
         # Weights that will be used in training
         self.weights = np.zeros((m,1))
-        pass
 
     def h(self, x):
         return sigmoid(self.weights.T @ x.T)
 
-    def p(self, X, y):
-        return np.exp(self.h(X), y) @ np.exp(1 - self.h(X), 1-y)
-
-    def p_i(self, X, y, i):
-        return self.p(np.exp(X,i), np.exp(y,i))
-
-    def L(self, X, y, n):
-        return np.prod(self.p_i(X,y,n))
-
-    def l(self, X, y, n):
-        return np.log(self.L(X, y, n))
 
     def gradient_ascent(self, X, y, epsilon, n):
         sum = np.zeros((1,2))
 
         for i in range(1, n+1):
-            sum += (y**i - self.h(X**i)) @ (X**i)
+            sum += (y - self.h(X)) @ X
 
         self.weights = (self.weights.T + epsilon * sum).T
-        #print(self.weights)
         return self.weights
 
 
-    def fit(self, X, y):
+    def fit(self, X, y, lr = 0.0005, iterations = 1000):
         """
         Estimates parameters for the classifier
         
@@ -49,12 +36,10 @@ class LogisticRegression:
             y (array<m>): a vector of floats containing 
                 m binary 0.0/1.0 labels
         """
-        print(X.shape, y.shape)
-        learning_rate = 2.8
-        for i in range(10):
-            self.gradient_ascent(X, y, learning_rate, len(y))
-            loss = binary_cross_entropy(y, self.predict(X))
-            #print(loss)
+        #X = self.preprocess(X)
+        #y = self.preprocess(y)
+        for i in range(iterations):
+            self.gradient_ascent(X, y, lr, len(y))
 
 
 
@@ -74,9 +59,20 @@ class LogisticRegression:
         """
         return self.h(X).flatten()
 
-        
+def preprocess_mirror(data, shift_value = 0.5):
+    # Data is scattered with 0 in middle and 1s at each end
+    # Change the range from [0,1] to [-0.5,0.5] so that we can abs the 0s to split them
+    # and then the different data will have a clear split
+    abs_data = np.abs(data - shift_value)
+    return feature_scale(abs_data)
 
-        
+def feature_scale(data):
+    # Standardization
+
+    mean = np.mean(data, axis=0)
+    std = np.std(data, axis=0)
+    return (data - mean) / std
+
 # --- Some utility functions 
 
 def binary_accuracy(y_true, y_pred, threshold=0.5):
