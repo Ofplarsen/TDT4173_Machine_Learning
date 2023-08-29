@@ -30,14 +30,14 @@ class DecisionTree:
 
     def A(self, A, y):
         A_y = pd.concat([A, y], axis=1)
-
+        # Group each feature by if "yes/no"
         split = A_y.groupby(A_y.columns[0])[A_y.columns[1]].value_counts().unstack(fill_value=0)
+        # Returns summary of each feature in [number_of_yes, number_of_no]
         return [[count_yes, count_no] for count_yes, count_no in split.values] # Generalise more
 
     def gain(self, S, A):
         total = 0
         for s_v in A:
-            #print(s_v)
             total += sum(s_v) / sum(S) * self.entropy(s_v)
 
         return self.entropy(S) - total
@@ -57,32 +57,26 @@ class DecisionTree:
             self.root['y'] = value_counts.index.tolist()[0]
             return
 
-        entropy = self.entropy(value_counts.values)
-
-        dfs = []
-        A = []
         gain = []
         for c in X.columns:
-            #print(c)
+            # Computes the yes/no ratio used for finding entropy and gain
             A = self.A(X[c], y)
-            #print(A)
-
-            #print(self.gain(value_counts, A))
+            # Compute gain based on gain formula
             gain.append(self.gain(value_counts, A))
 
-        #print(gain)
-        #print(X.columns.tolist())
-
+        # Sorts the found gain for each feature and each feature based on highest gain
         sorted_pairs = sorted(zip(gain, X.columns.tolist()), reverse=True)
 
         # Unpack the sorted pairs into separate lists
         sorted_names = [name for _, name in sorted_pairs]
-        #print(sorted_names)
 
+        # Saves in class the order of the features with the highest information gain first
         self.sorted_names = sorted_names
 
+        # Reorders the pd to be sorted by gain
         X = X[sorted_names]
 
+        # Creates tree of features using dictionaries
         for index, i in enumerate(X.values):
             tree = self.root
 
@@ -93,11 +87,6 @@ class DecisionTree:
 
             if 'y' not in tree:
                 tree['y'] = y[index]
-
-
-
-        print(pd.Series(self.root))
-
 
     def predict(self, X):
         """
@@ -114,17 +103,19 @@ class DecisionTree:
             A length m vector with predictions
         """
         y = []
+        # Sorts by found gain in fit
         X = X[self.sorted_names]
+        # Loops the tree to the found target value and returns as a prediction
         for index, i in enumerate(X.values):
             tree = self.root
             for x in i:
                 if x not in tree:
+                    # If tree not explored make random choice
                     x = random.choice(list(tree.keys()))
                 tree = tree[x]
             y.append(tree['y'])
 
         return np.array(y)
-
 
 
     def get_rules(self):
