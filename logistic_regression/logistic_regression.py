@@ -16,7 +16,7 @@ class LogisticRegression:
         return sigmoid(self.weights.T @ x.T)
 
 
-    def gradient_ascent(self, X, y, epsilon, n):
+    def gradient_descent(self, X, y, epsilon, n):
         sum = np.zeros((1,2))
 
         for i in range(1, n+1):
