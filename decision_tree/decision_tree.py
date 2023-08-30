@@ -18,15 +18,6 @@ class DecisionTree:
     def p(self, t, n):
         return t/n
 
-    def entropy(self, S):
-        entropy = 0
-        for i in S:
-            p_i = self.p(i, sum(S))
-            if p_i == 0:
-                continue
-            entropy -= p_i * np.log2(p_i)
-
-        return entropy
 
     def A(self, A, y):
         A_y = pd.concat([A, y], axis=1)
@@ -38,9 +29,9 @@ class DecisionTree:
     def gain(self, S, A):
         total = 0
         for s_v in A:
-            total += sum(s_v) / sum(S) * self.entropy(s_v)
+            total += sum(s_v) / sum(S) * entropy(np.array(s_v))
 
-        return self.entropy(S) - total
+        return entropy(np.array(S)) - total
     
     def fit(self, X, y):
         """
@@ -118,6 +109,7 @@ class DecisionTree:
         return np.array(y)
 
 
+
     def get_rules(self):
         """
         Returns the decision tree as a list of rules
@@ -136,13 +128,22 @@ class DecisionTree:
             ...
         ]
         """
-        rules = []
-        for key, value in self.root.items():
-            rules.append(([(key, value)], 'yes'))
-            print(f"Key: {key}, Value: {value}")
+        rules = self.get_key_item(self.root, 0)
         return rules
 
-# --- Some utility functions 
+
+    def get_key_item(self, tree,feature_index, keys=[]):
+        rules = []
+        if isinstance(tree, dict) and not feature_index >= len(self.sorted_names):
+            for key, value in tree.items():
+                new_keys = keys + [(self.sorted_names[feature_index], key)]
+                rules.extend(self.get_key_item(value,feature_index + 1, new_keys))
+        else:
+            rules.append((keys, tree[list(tree.keys())[0]]))
+        return rules
+
+
+# --- Some utility functions
     
 def accuracy(y_true, y_pred):
     """
