@@ -10,19 +10,27 @@ class LogisticRegression:
         # NOTE: Feel free add any hyperparameters 
         # (with defaults) as you see fit
         # Weights that will be used in training
-        self.weights = np.zeros((m,1))
+        self.weights = np.ones((m,1))
 
     def h(self, x):
         return sigmoid(self.weights.T @ x.T)
 
 
-    def gradient_descent(self, X, y, epsilon, n):
-        sum = np.zeros((1,2))
+    def gradient_descent(self, X, y, epsilon):
+        """
+        Gradient descent computed using numpy to maximize efficiency
+        Args:
+            X (array<m,n>): a matrix of floats with
+                m rows (#samples) and n columns (#features)
+            y (array<m>): a vector of floats containing
+                m binary 0.0/1.0 labels
+            epsilon: Learning rate
 
-        for i in range(1, n+1):
-            sum += (y - self.h(X)) @ X
-
-        self.weights = (self.weights.T + epsilon * sum).T
+        Returns:
+        Weights
+        """
+        sum = 2 * np.sum(self.h(X) - y, axis=0, keepdims=True) @ X
+        self.weights = (self.weights.T - epsilon * sum).T
         return self.weights
 
 
@@ -36,10 +44,8 @@ class LogisticRegression:
             y (array<m>): a vector of floats containing 
                 m binary 0.0/1.0 labels
         """
-        #X = self.preprocess(X)
-        #y = self.preprocess(y)
         for i in range(iterations):
-            self.gradient_ascent(X, y, lr, len(y))
+            self.gradient_descent(X, y, lr)
 
 
 
