@@ -44,9 +44,9 @@ class LogisticRegression:
             y (array<m>): a vector of floats containing 
                 m binary 0.0/1.0 labels
         """
+
         for i in range(iterations):
             self.gradient_descent(X, y, lr)
-
 
 
     def predict(self, X):
