@@ -6,9 +6,9 @@ Welcome to the TDT4173 Machine Learning repository! This repository contains the
 
 The **Individual Assignment** folder contains the code and documentation for the individual assignment portion of the course.
 
-## Main Projects
+## Main Project
 
-The **Main Projects** folder represents 100% of the grade for the TDT4173 course. These projects were collaborative efforts between Ola Sæther, Simeon Christoffersen and Olav Finne Præsteng Larsen. The folder includes two notebooks with our best predictions, and a long notebook containing everything we did, also failed attempts and failed strategies.
+The **Machine Learning Project** folder represents 100% of the grade for the TDT4173 course. This project was a collaborative effort between Ola Sæther, Simeon Christoffersen, and Olav Finne Præsteng Larsen. The folder includes two notebooks with our best predictions, a long notebook containing everything we did, and failed attempts and strategies. The group tried to predict solar power generation every hour in three different solar panels in different locations based on around 40 weather features.
 
 ### Contributors
 - Ola Sæther
